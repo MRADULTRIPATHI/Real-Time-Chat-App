@@ -1,6 +1,6 @@
 ## 🩺 Overview
 
-**MediConnect** is a modern, full-stack real-time messaging platform for healthcare teams and professionals.  
+**Pager_X** is a modern, full-stack real-time messaging platform for healthcare teams and professionals.  
 Built with **React.js** (frontend) and **Node.js/Express** (backend), it supports secure instant group/direct messaging, file sharing, message editing, emojis, SMS alerts, and more—optimized for both desktop and mobile users.
 
 Ideal for clinics, hospitals, or any distributed team needing robust, scalable communication.
