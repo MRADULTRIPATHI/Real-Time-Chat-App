@@ -26,10 +26,3 @@ This project is ideal for clinics, hospitals, or any team needing robust, event-
 - **Others:** REST API, JWT Authentication
 
 ---
-
-## **Setup & Installation**
-
-### 1. Clone the Repository
-```bash
-git clone <repo-url>
-cd <project-folder>
