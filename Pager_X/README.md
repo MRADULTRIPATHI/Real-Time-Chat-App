@@ -58,3 +58,28 @@ Pager_X/
 ```bash
 git clone https://github.com/MRADULTRIPATHI/Real-Time-Chat-App.git
 cd Real-Time-Chat-App
+git clone https://github.com/MRADULTRIPATHI/Real-Time-Chat-App.git
+Then move into the project directory:
+cd Real-Time-Chat-App
+**1. Move to the server directory:**
+Go to the Pager_X folder
+cd Pager_X
+**2. Copy the example environment file and rename it to `.env`:**
+
+copy .env.example .env     # Windows
+# OR
+cp .env.example .env       # Mac/Linux
+### **3. Install Dependencies**
+
+**For the Backend:**
+```bash
+cd server
+npm install
+npm start
+**For the Frontend:**  
+Open a **new terminal window/tab** and run:
+
+```bash
+cd client
+npm install
+npm start
