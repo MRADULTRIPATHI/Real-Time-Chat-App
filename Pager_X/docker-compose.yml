@@ -1,0 +1,11 @@
+services:
+  chat-app:
+    build: .
+    container_name: pagerx_combined
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    environment:
+      - NODE_ENV=production        
+    restart: unless-stopped

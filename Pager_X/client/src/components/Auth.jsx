@@ -28,10 +28,16 @@ const Auth = () => {
 
         const { username, password, phoneNumber, avatarURL } = form;
 
-        const URL = 'http://localhost:5000/auth';
+        // ✅ Use env variable instead of localhost
+        const API_URL = process.env.REACT_APP_API_URL || '';
+        const endpoint = `${API_URL}/auth/${isSignup ? 'signup' : 'login'}`;
 
-        const { data: { token, userId, hashedPassword, fullName } } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
-            username, password, fullName: form.fullName, phoneNumber, avatarURL,
+        const { data: { token, userId, hashedPassword, fullName } } = await axios.post(endpoint, {
+            username,
+            password,
+            fullName: form.fullName,
+            phoneNumber,
+            avatarURL,
         });
 
         cookies.set('token', token);
@@ -72,14 +78,14 @@ const Auth = () => {
                         )}
                         <div className="auth__form-container_fields-content_input">
                             <label htmlFor="username">Username</label>
-                                <input 
-                                    name="username" 
-                                    type="text"
-                                    placeholder="Username"
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
+                            <input 
+                                name="username" 
+                                type="text"
+                                placeholder="Username"
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
                         {isSignup && (
                             <div className="auth__form-container_fields-content_input">
                                 <label htmlFor="phoneNumber">Phone Number</label>
@@ -105,15 +111,15 @@ const Auth = () => {
                             </div>
                         )}
                         <div className="auth__form-container_fields-content_input">
-                                <label htmlFor="password">Password</label>
-                                <input 
-                                    name="password" 
-                                    type="password"
-                                    placeholder="Password"
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
+                            <label htmlFor="password">Password</label>
+                            <input 
+                                name="password" 
+                                type="password"
+                                placeholder="Password"
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
                         {isSignup && (
                             <div className="auth__form-container_fields-content_input">
                                 <label htmlFor="confirmPassword">Confirm Password</label>
@@ -125,7 +131,7 @@ const Auth = () => {
                                     required
                                 />
                             </div>
-                            )}
+                        )}
                         <div className="auth__form-container_fields-content_button">
                             <button>{isSignup ? "Sign Up" : "Sign In"}</button>
                         </div>
@@ -134,8 +140,7 @@ const Auth = () => {
                         <p>
                             {isSignup
                              ? "Already have an account?" 
-                             : "Don't have an account?"
-                             }
+                             : "Don't have an account?"}
                              <span onClick={switchMode}>
                              {isSignup ? 'Sign In' : 'Sign Up'}
                              </span>
@@ -150,4 +155,4 @@ const Auth = () => {
     )
 }
 
-export default Auth
+export default Auth;

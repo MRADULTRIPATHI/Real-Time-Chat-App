@@ -1,59 +1,91 @@
-const { connect } = require('getstream');
-const bcrypt = require('bcrypt');
-const StreamChat = require('stream-chat').StreamChat;
-const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { StreamChat } = require('stream-chat');
 
-require('dotenv').config();
+// ✅ Load Stream client from env
+const streamClient = StreamChat.getInstance(
+    process.env.STREAM_API_KEY,
+    process.env.STREAM_API_SECRET
+);
 
-const api_key = process.env.STREAM_API_KEY;
-const api_secret = process.env.STREAM_API_SECRET;
-const app_id = process.env.STREAM_APP_ID;
-
-const signup = async (req, res) => {
+// ---------- SIGNUP ----------
+const signup = async(req, res) => {
     try {
-        const { fullName, username, password, phoneNumber } = req.body;
+        const { fullName, username, password, phoneNumber, avatarURL } = req.body;
 
-        const userId = crypto.randomBytes(16).toString('hex');
-
-        const serverClient = connect(api_key, api_secret, app_id);
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username and password required' });
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const token = serverClient.createUserToken(userId);
+        // ✅ Create/Update user in Stream
+        await streamClient.upsertUser({
+            id: username,
+            name: fullName,
+            fullName,
+            image: avatarURL,
+            phone: phoneNumber,
+        });
+        console.log("Upserted user on signup:", username);
 
-        res.status(200).json({ token, fullName, username, userId, hashedPassword, phoneNumber });
-    } catch (error) {
-        console.log(error);
+        // ✅ Generate Stream token
+        const streamToken = streamClient.createToken(username);
+        console.log("Generated Stream Token (Signup):", streamToken);
 
-        res.status(500).json({ message: error });
+        // Our own JWT (optional, for app-level auth)
+        const jwtToken = jwt.sign({ id: username, username },
+            process.env.JWT_SECRET, { expiresIn: '7d' }
+        );
+
+        return res.status(201).json({
+            token: streamToken, // 👈 Frontend authToken
+            jwt: jwtToken,
+            userId: username,
+            fullName,
+            phoneNumber,
+            avatarURL,
+            hashedPassword,
+        });
+    } catch (err) {
+        console.error('Signup error:', err.message);
+        return res.status(500).json({ message: 'Signup failed', error: err.message });
     }
 };
 
-const login = async (req, res) => {
+// ---------- LOGIN ----------
+const login = async(req, res) => {
     try {
         const { username, password } = req.body;
-        
-        const serverClient = connect(api_key, api_secret, app_id);
-        const client = StreamChat.getInstance(api_key, api_secret);
 
-        const { users } = await client.queryUsers({ name: username });
-
-        if(!users.length) return res.status(400).json({ message: 'User not found' });
-
-        const success = await bcrypt.compare(password, users[0].hashedPassword);
-
-        const token = serverClient.createUserToken(users[0].id);
-
-        if(success) {
-            res.status(200).json({ token, fullName: users[0].fullName, username, userId: users[0].id});
-        } else {
-            res.status(500).json({ message: 'Incorrect password' });
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username and password required' });
         }
-    } catch (error) {ads
-        console.log(error);
 
-        res.status(500).json({ message: error });
+        // ✅ Ensure user exists in Stream
+        await streamClient.upsertUser({
+            id: username,
+            name: username,
+        });
+        console.log("Upserted user on login:", username);
+
+        // ✅ Generate Stream token
+        const streamToken = streamClient.createToken(username);
+        console.log("Generated Stream Token (Login):", streamToken);
+
+        const jwtToken = jwt.sign({ id: username, username },
+            process.env.JWT_SECRET, { expiresIn: '7d' }
+        );
+
+        return res.status(200).json({
+            token: streamToken, // 👈 Frontend authToken
+            jwt: jwtToken,
+            userId: username,
+        });
+    } catch (err) {
+        console.error('Login error:', err.message);
+        return res.status(500).json({ message: 'Login failed', error: err.message });
     }
 };
 
-module.exports = { signup, login }
+module.exports = { signup, login };
