@@ -65,6 +65,7 @@ Ideal for clinics, hospitals, or distributed teams needing robust, scalable comm
 ---
 
 ## 📁 Folder Structure
+```
 
 Pager_X/
 │
@@ -84,42 +85,48 @@ Pager_X/
 ├── README.md
 ├── .gitignore
 
+```
+
 ---
 
 ## ⚙️ Setup & Installation
 
 ## 1. **Clone the Repository**
+```
 
 git clone https://github.com/MRADULTRIPATHI/Real-Time-Chat-App.git
 cd Real-Time-Chat-App/Pager_X
-
+```
 ### 2. **Setup Environment Variables**
-
+```
  -Go to the server folder and create .env file from the example:
  -cd server
  -cp .env.example .env   # Mac/Linux
  # OR
  -copy .env.example .env # Windows
 ## Add your Stream API, Twilio credentials, and JWT secret inside .env.
-
+```
 ## 3. **Install Dependencies**
 ## Backend
+```
 -cd server
 -npm install
 -npm start
+```
 ## Frontend
+```
 -cd client
 -npm install
 -npm start
-
+```
 ## 4.  **Deployment (Docker + Render)**
-
+```
 -The app can be containerized into a single Docker image combining frontend + backend.
 
 -Hosted publicly using DockerHub → mradul07/pager_x_chat_application
 
 -Deployed on Render for global access.
-
+```
 ---
 
 ## 📌 Summary
